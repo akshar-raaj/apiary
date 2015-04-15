@@ -40,11 +40,11 @@ This endpoint is used to create an expense. Two keys need to be sent in the POST
 
 + Request (application/json)
 
-         {"description": "Setup CI", "amount": 1500}
+        {"description": "Setup CI", "amount": 1500}
          
 + Response 201 (application/json)
 
-         {"description": "Setup CI", "amount": 1500}
+        {"description": "Setup CI", "amount": 1500, "id": 1, "resource_uri": "/api/expenses/6/"}
           
 ### Single Expense [/api/expenses/{expense_id}/]
 
