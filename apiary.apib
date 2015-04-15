@@ -1,0 +1,67 @@
+FORMAT: 1A
+HOST: http://f69e402.ngrok.com
+
+# Expenses API
+
+This allows people to track their expenses
+
+## Group Expenses endpoints
+
+This groups all the expenses endpoint. Probably this will have Expense and ExpenseCategory endpoints. We will have users endpoint in a separate group.
+
+### Expenses [/api/expenses/]
+
+This is the list endpoint and works with a collection of expenses.
+
+#### List all expenses [GET]
+
++ Response 200 (application/json)
+
+        {"meta":
+            {
+             "limit": 20,
+             "next": null,
+             "offset": 0,
+             "previous": null,
+             "total_count": 1
+            },
+         "objects":
+            [
+             {"amount": 600, "description": "Bought a server", "id": 1, "resource_uri": "/api/expenses/1/"}
+            ]
+        }
+         
+#### Create an expense [POST]
+
+This endpoint is used to create an expense. Two keys need to be sent in the POST request
+
+* description
+* amount
+
++ Request (application/json)
+
+         {"description": "Setup CI", "amount": 1500}
+         
++ Response 201 (application/json)
+
+         {"description": "Setup CI", "amount": 1500}
+          
+### Single Expense [/api/expenses/{expense_id}/]
+
+This is the detail endpoint and works with a single expense.
+
++ Parameters
+     + expense_id (required, int, `1`) ... Id of the expense in question
+     
+#### Expense details [GET]
+
++ Response 200 (application/json)
+
+        {
+          "description": "Bought a server",
+          "amount": 100
+        }
+          
+## Group Users
+
+This will have User and Group endpoints
