@@ -1,485 +1,71 @@
 FORMAT: 1A
-HOST: http://ecom.whalerockindustries.com/
+HOST: http://f69e402.ngrok.com
 
+# Expenses API
 
-# Ecom
+This allows people to track their expenses. Right now the api doesn't have authorization and authentication, but will add it soon.
 
-Ecom is a json based api to allow whalerock to provide its 
-sites membership and purchase functionality.
+## Group Expenses endpoints
 
-## Group User and role endpoints
+This groups all the expenses endpoint. Probably this will have Expense and ExpenseCategory endpoints. We will have users endpoint in a separate group.
 
-This groups the endpoints to get/create users and editors, or any other role we could be having.
+### Expenses [/api/expenses/]
 
-### Users [/api/v1/user/]
+This is the list endpoint and works with a collection of expenses.
 
-#### Login [POST]
-
-+ Response 200 (application/json)
-
-        {"api_key": "abcdef-random-string"}
-    
-    
-### Editor [/api/v1/editor/]
-
-#### Create new editor [POST]
-
-Allows creating a new editor. 
-
-It takes a JSON object containing a username, password and email.
-
-+ username (string) - The username
-+ password (string): The raw password
-+ email (string): the email
-
-+ Request (application/json)
-
-            {
-                "username: "appleseed",
-                "password": "hunter2",
-                "email": "appleseed@whalerockindustries.com"
-            }
-
-+ Response 201 (application/json)
-
-
-    + Body
-
-                {
-                    "created": true
-                }
-                
-## Group Currency endpoints
-
-This groups all the endpoints related to currency app.
-                
-### Valuable [/api/v1/valuable/]
-
-#### Create new valuable [POST]
-
-Allows creating a new valuable. 
-
-It takes a JSON object containing a username, password and email. 
-Only allows authenticated requests.
-
-+ name (string) - The name of the valuable
-+ desciption (string): The description of the valuable
-
-
-+ Request (application/json)
-
-            {
-                "name: "Premium Video",
-                "password": "A premium video"
-            }
-
-+ Response 201 (application/json)
-
-
-    + Body
-
-                {
-                    "created": true
-                    "valuable_id": 101
-                }
-
-### PayableType [/api/v1/payabletype/]
-
-#### Create new payabletype [POST]
-
-Allows creating a new payabletype. 
-
-It takes a JSON object containing a description and name. 
-Only allows authenticated requests.
-
-+ name (string) - The name of the payabletype
-+ desciption (string): The description of the payabletype
-
-
-+ Request (application/json)
-
-            {
-                "name: "A Table",
-                "description": "Desk"
-            }
-
-+ Response 201 (application/json)
-
-
-    + Body
-
-                {
-                    "url": "/api/v1/payabletype/1/",
-                    "description": "Desk",
-                    "name": "A Table"
-                }
-
-#### Retrieve the payabletype [GET]
-+ Only allows authenticated requests.
+#### List all expenses [GET]
 
 + Response 200 (application/json)
 
+        {"meta":
+            {
+             "limit": 20,
+             "next": null,
+             "offset": 0,
+             "previous": null,
+             "total_count": 1
+            },
+         "objects":
+            [
+             {"amount": 600, "description": "Bought a server", "id": 1, "resource_uri": "/api/expenses/1/"}
+            ]
+        }
+         
+#### Create an expense [POST]
 
-    + Body
-                
-                {
+This endpoint is used to create an expense. Two keys need to be sent in the POST request
 
-                    "url": "/api/payabletype/1/",
-                    "description": "Desk",
-                    "name": "A Table"
-                }
-
-### Payable [/api/v1/payable/]
-
-#### Create new payable [POST]
-
-Allows creating a new payable. 
-
-It takes a JSON object containing a payabletype, value and purchasable. 
-Only allows authenticated requests.
-
-+ value (int): The value of the payable
-+ payabletype (string) - The payabletype of the payable
-+ purchasable (string): The purchasable of the payable
-
+* description
+* amount
 
 + Request (application/json)
 
-            {
-                "value": "500",
-                "payabletype": "/api/payabletype/1/", 
-                "purchasable": "/api/purchasable/1/"
-            }
-
+        {"description": "Setup CI", "amount": 1500}
+         
 + Response 201 (application/json)
 
+        {"description": "Setup CI", "amount": 1500, "id": 1, "resource_uri": "/api/expenses/6/"}
+          
+### Single Expense [/api/expenses/{expense_id}/]
 
-    + Body
+This is the detail endpoint and works with a single expense.
 
-                {
-                    "url": "/api/payable/1/",
-                    "value": 500,
-                    "payabletype": "/api/payabletype/1/",
-                    "purchasable": "/api/purchasable/1/"
-                }
-
-#### Retrieve the payable [GET]
-+ Only allows authenticated requests.
++ Parameters
+     + expense_id (required, int, `1`) ... Id of the expense in question
+     
+#### Expense details [GET]
 
 + Response 200 (application/json)
 
+        {
+          "description": "Bought a server",
+          "amount": 100
+        }
+         
+#### Delete an expense [DELETE]
 
-    + Body
-                
-                {
-                    "url": "/api/payable/1/",
-                    "value": 500,
-                    "payabletype": "/api/payabletype/1/",
-                    "purchasable": "/api/purchasable/1/"
-                }
++ Response 204
 
-### Item [/api/v1/item/]
+## Group Users
 
-#### Create new item [POST]
-
-Allows creating a new item. 
-
-It takes a JSON object containing an item. 
-Only allows authenticated requests.
-
-+ item (string): The item of the item
-
-+ Request (application/json)
-
-            {
-                "item": "Pendrive",
-            }
-
-+ Response 201 (application/json)
-
-
-    + Body
-
-                {
-                    "url": "/api/item/1/",
-                    "item": "Pendrive"
-                }
-
-#### Retrieve the item [GET]
-+ Only allows authenticated requests.
-
-+ Response 200 (application/json)
-
-
-    + Body
-                
-                {
-                    "url": "/api/item/1/",
-                    "item": "Pendrive"
-                }
-
-### Purchasable [/api/v1/purchasable/]
-
-#### Create new purchasable [POST]
-
-Allows creating a new purchasable. 
-
-It takes a JSON object containing an item. 
-Only allows authenticated requests.
-
-+ item (string): The item of the purchasable
-
-+ Request (application/json)
-
-            {   
-                "item": "/api/item/1/" 
-            }
-
-+ Response 201 (application/json)
-
-
-    + Body
-
-                {
-                    "url": "/api/purchasable/1/",
-                    "item": "/api/item/1/"
-                }
-
-#### Retrieve the purchasable [GET]
-+ Only allows authenticated requests.
-
-+ Response 200 (application/json)
-
-
-    + Body
-                
-                {
-                    "item": "/api/item/1/"
-                }                
-
-### Transaction [/api/v1/transaction/]
-
-#### Create new transaction [POST]
-
-Allows creating a new transaction. 
-
-It takes a JSON object containing an user, value, payabletype, purchasable, start date and expire date. 
-Only allows authenticated requests.
-
-+ user (string): The user of the transaction
-+ value (int): The value of the transaction
-+ start date (string): The start date of the transaction
-+ expire date (string): The expire date of the transaction
-+ payabletype (string): The payabletype of the transaction
-+ purchasable (string): The purchasable of the transaction
-
-+ Request (application/json)
-
-            {
-                "user": "/api/users/1/",
-                "value": 200,
-                "payabletype": "/api/payabletype/1/", 
-                "purchasable": "/api/purchasable/1/", 
-                "start_date": "2015-04-10", 
-                "expire_date": "2015-04-10"
-            }
-
-+ Response 201 (application/json)
-
-
-    + Body
-
-                {
-                    "url": "/api/transaction/1/",
-                    "user": "/api/users/1/",
-                    "value": 200,
-                    "payable_type": "/api/payabletype/1/",
-                    "purchasable": "/api/purchasable/1/",
-                    "start_date": "2015-04-10",
-                    "expire_date": "2015-04-10"
-                }
-
-#### Retrieve the transaction [GET]
-+ Only allows authenticated requests and return the objects owned by that user.
-
-+ Response 200 (application/json)
-
-
-    + Body
-                
-                {
-                    "url": "/api/transaction/1/",
-                    "user": "/api/users/1/",
-                    "value": 200,
-                    "payable_type": "/api/payabletype/1/",
-                    "purchasable": "/api/purchasable/1/",
-                    "start_date": "2015-04-10",
-                    "expire_date": "2015-04-10"
-                }                
-
-### UserCommodity [/api/v1/usercommodity/]
-
-#### Create new usercommodity [POST]
-
-Allows creating a new usercommodity. 
-
-It takes a JSON object containing an user, value and payabletype. 
-Only allows authenticated requests.
-
-+ user (string): The user of the usercommodity
-+ value (int): The value of the usercommodity
-+ payabletype (string): The payabletype of the usercommodity
-
-+ Request (application/json)
-
-            {
-                "user": "/api/users/1/", 
-                "value": 300,
-                "payabletype": "/api/payabletype/1/" 
-            }
-
-+ Response 201 (application/json)
-
-
-    + Body
-
-                {
-                    "url": "/api/usercommodity/1/",
-                    "user": "/api/users/1/", 
-                    "value": 300,
-                    "payabletype": "/api/payabletype/1/"
-                }
-
-#### Retrieve the usercommodity [GET] 
-+ Only allows authenticated requests and return the objects owned by that user.
-
-+ Response 200 (application/json)
-
-
-    + Body
-                
-                {
-                    "url": "/api/usercommodity/1/",
-                    "user": "/api/users/1/", 
-                    "value": 300,
-                    "payabletype": "/api/payabletype/1/"
-                }
-
-### UserProfile Endpoint  [/api/v1/userprofile/]
-
-#### Create new userprofile [POST]
-
-Only allows authenticated requests.
-
-It takes a JSON object containing an user, email, billingaddress, shippingaddress, optin/out.
-
-+ email (string): The email of UserProfile
-+ billingaddress (string): The billingaddress of UserProfile
-+ shippingaddress (string): The shippingaddress of UserProfile
-+ optin/out (boolean): The optin/out of UserProfile
-
-+ Request (application/json)
-
-            {
-        
-                "user": "/api/user/1/",
-                "eamil": "example@gmail.com",
-                "billingaddress": "2-166, Madhapur, Hyderabad",
-                "shippingaddress": "354, Madahpur, Hyderabad",
-                "optin/out": True
-        
-            }
-
-+ Response 201 (application/json)
-    
-            {
-        
-                "url": "/api/userprofile/1/",
-                "user": "/api/users/1/",
-                "email": "example@gmail.com",
-                "billingaddress": "2-166, Madhapur, Hyderabad",
-                "shippingaddress": "354, Madahpur, Hyderabad",
-                "optin/out": True
-        
-            } 
-
-#### Retrieve the userprofile [GET]
-
-This endpoint is returns the userprofile to authenticated users
-
-+ Response 200 (application/json)
-
- 
-    + Body
-    
-
-            {
-                "url": "/api/userprofile/1/",
-                "user": "/api/users/1/",
-                "email": "example@gmail.com",
-                "billing_address": "2-166, Madhapur, Hyderabad",
-                "shipping_address": "354, Madahpur, Hyderabad",
-                "opt_in_out": True
-            }
-
-### Subscription Endpoint [/api/v1/subscription/]
-
-#### Create new subscription [POST]
-
-Only allows authenticated requests.
-
-It takes a JSON object containing an user, recurr, purchasable, createdtime, startsubscritpiondate, endsubscriptiondate, subscriptionactive.
-
-+ recurr (boolean): The recurr of Subscription
-+ purchasable (string): The purchasable of Subscription
-+ createdtime (string): The createdtime of Subscription
-+ startsubscritpiondate (string): The startsubscritpiondate of Subscription
-+ endsubscriptiondate (string): The endsubscriptiondate of Subscription
-+ subscriptionactive (boolean): The subscriptionactive of Subscription
-
-+ Request (application/json)
-
-            {
-                "user": "/api/users/1/",
-                "recurr": True, 
-                "purchasable": "/api/purchasable/1/",
-                "createdtime": "24-4-2015",
-                "startsubscritpiondate": "2015-4-24",
-                "endsubscriptiondate": "2015-4-30",
-                "subscriptionactive": True
-            }
-
-+ Response 201 (application/json)
-    
-            {
-                "url": "/api/subscription/1/",
-                "user": "/api/users/1/",
-                "recurr": True, 
-                "purchasable": "/api/purchasable/1/",
-                "created_time": "2015-4-24",
-                "startsubscritpiondate": "2015-4-24",
-                "endsubscriptiondate": "2015-4-30",
-                "subscriptionactive": True
-            }
-
-#### Retrieve the subscription [GET]
-
-This endpoint is returns the Subscription to authenticated users
-
-+ Response 200 (application/json)
-
-
-    + Body
-
-            {
-        
-                "url": "/api/subscription/1/",
-                "user": "/api/users/1/",
-                "recurr": True, 
-                "purchasable": "/api/purchasable/1/",
-                "createdtime": "2015-4-24",
-                "startsubscritpiondate": "2015-4-24",
-                "endsubscriptiondate": "2015-4-30",
-                "subscriptionactive": True
-        
-            }
+This will have User and Group endpoints
